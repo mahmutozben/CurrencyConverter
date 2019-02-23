@@ -1,0 +1,102 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<script type="text/javascript">
+
+    function createRequest() {
+        var model = {};
+        model.Amount = $("#Amount").val();
+        model.Currency = $("#Currency :selected").val();
+        model.ConvertCurrency = $("#ConvertCurrency :selected").val();
+
+        return model;
+    }
+
+    function postData() {
+        var json = createRequest();
+        
+
+         $.ajax({
+            url: '@Url.Action("CalculateCurrency", "Home")',
+            type: 'POST',
+            data: JSON.stringify(json),
+            dataType: 'json',
+            contentType: 'application/json; charset=utf-8',
+            success: function (response) {
+                if (response.IsSuccess) {
+                    $("#newCurrenycAmount").text(response.Message);
+                }
+                else {
+                    bootbox.alert(response.Message);
+                }
+            }
+        });
+    }
+
+</script>
+<div>
+    <div id="form" style="margin-top: 80px;">
+        <form id="MyForm" method="post">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-3">Amount</label>
+                            <div class="col-md-9">
+                                <input type="number" min="0"  class="form-control" id="Amount" name="Amount" placeholder="Miktar">
+                                @*<input type="number" min="0" step='0.01' value='0.00' class="form-control" id="Amount" name="Amount" placeholder="Miktar">*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-3">From Currency</label>
+                            <div class="col-md-9">
+                                <select id="Currency" class="form-control">
+                                    @foreach (var item in Model)
+                                    {
+                                        <option>@item</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <span class="glyphicon glyphicon-resize-horizontal" style="font-size:xx-large"></span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <div class="row">
+                            <label class="col-md-3">To Currency</label>
+                            <div class="col-md-9">
+                                <select id="ConvertCurrency" class="form-control">
+                                    @foreach (var item in Model)
+                                    {
+                                        <option>@item</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <button type="button" onclick="postData()" class="btn btn-primary">Convert</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="row form-group">
+            <div class="col-md-3 pull-right">
+                <h2 class="label label-success" style="font-size:medium"><span id="newCurrenycAmount"></span></h2>
+            </div>
+            <div class="col-md-2 pull-right">
+            </div>
+        </div>
+    </div>
+</div>
